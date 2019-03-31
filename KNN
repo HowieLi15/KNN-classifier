@@ -1,0 +1,57 @@
+import random
+import csv
+from collections import Counter
+import math
+
+def data(filename, split, train=[], test=[]):
+    file = open(filename,'rb')
+    data=list(file)
+    for x in range(len(data)-1):
+        if random.random()<split:
+            train.append(data[x])
+        else:
+            test.append(data[x])
+
+
+def distance(p1, p2):
+    dis=0
+    for x in range(3):
+        dis+=(p1[x]-p2[x])**2
+    dis=math.sqrt(dis)
+    return dis
+def neighbor(k, p, dataset):
+    neidis=[]
+    nei=[]
+    neibor=[]
+    for x in range(len(dataset)):
+        dis = distance(p, dataset[x])
+        neidis.append(dis)
+
+    for w in range(k):
+        nei.append(neidis.index(min(neidis)))
+        neidis[neidis.index(min(neidis))] = max(neidis)
+        neibor.append(dataset[nei[w]])
+
+
+    return neibor
+
+def categ(neibor):
+    categray=[]
+    for i in range(len(neibor)):
+        categray.append(neibor[i][5])
+    cate = Counter(categray).most_common()
+    return cate
+
+
+t=[]
+te=[]
+result=[]
+neib=[]
+data('flowers.csv', 0.66, t, te)
+for i in range(len(te)):
+    neib=neighbor(3, te[i], t)
+    out=categ(neib)
+    result.append(out)
+
+
+
